@@ -1,12 +1,7 @@
 (ns loan-api.core
+  (:require [loan-api.http :as http])
   (:gen-class))
 
-(defn greet
-  "Callable entry point to the application."
-  [data]
-  (println (str "Hello, " (or (:name data) "World") "!")))
+(defn -main [& _]
+  (http/start))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (greet {:name (first args)}))

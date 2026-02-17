@@ -1,36 +1,19 @@
-(ns loan-api.domain)
+(ns loan-api.domain
+  (:require [clojure.spec.alpha :as s]))
 
-(defn- valid-number? [n]
-  (and (number? n) (not (neg? n))))
+(s/def ::amount (s/and number? pos?))
+(s/def ::rate (s/and number? (complement neg?)))
+(s/def ::months (s/and int? pos?))
 
-(defn- valid-months? [m]
-  (and (integer? m) (pos? m)))
+(s/def ::loan-input
+  (s/keys :req-un [::amount ::rate ::months]))
 
 (defn- validate-input!
-  [{:keys [amount rate months] :as input}]
-  (cond
-    (nil? amount)
-    (throw (ex-info "Amount is required" {:type :validation-error :field :amount}))
-
-    (nil? rate)
-    (throw (ex-info "Rate is required" {:type :validation-error :field :rate}))
-
-    (nil? months)
-    (throw (ex-info "Months is required" {:type :validation-error :field :months}))
-
-    (not (valid-number? amount))
-    (throw (ex-info "Amount must be a positive number"
-                    {:type :validation-error :field :amount}))
-
-    (not (valid-number? rate))
-    (throw (ex-info "Rate must be a non-negative number"
-                    {:type :validation-error :field :rate}))
-
-    (not (valid-months? months))
-    (throw (ex-info "Months must be a positive integer"
-                    {:type :validation-error :field :months}))
-
-    :else true))
+  [input]
+  (when-not (s/valid? ::loan-input input)
+    (throw (ex-info "Invalid loan input"
+                    {:type :validation-error
+                     :explain (s/explain-data ::loan-input input)}))))
 
 (defn calculate-loan
   [input]
