@@ -17,4 +17,4 @@ jobs:
           cli: latest
 
       - name: Run tests
-        run: clj -M:test -e "(require 'loan-api.domain-test) (clojure.test/run-tests 'loan-api.domain-test)"
+        run: clojure -M:test -e "(require 'loan-api.domain-test) (clojure.test/run-tests 'loan-api.domain-test)"
